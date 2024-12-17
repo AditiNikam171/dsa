@@ -1,0 +1,99 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype>
+using namespace std;
+
+// Structure for the expression tree nodes
+struct Node {
+    char data;
+    Node* left;
+    Node* right;
+
+    Node(char val) {
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+// Function to check if the character is an operand (i.e., a digit)
+bool isOperand(char ch) {
+    return isdigit(ch);
+}
+
+// Function to construct the expression tree from the postfix expression
+Node* constructTree(const string& postfix) {
+    stack<Node*> s;
+
+    // Traverse the postfix expression from left to right
+    for (int i = 0; i < postfix.length(); i++) {
+        char ch = postfix[i];
+
+        if (isOperand(ch)) {
+            s.push(new Node(ch));  // Operand: Create a new node and push it onto the stack
+        } else {
+            Node* operatorNode = new Node(ch);  // Operator: Create a new node for the operator
+
+            // Pop two operands from the stack to be the left and right children
+            operatorNode->right = s.top();  // Right child (because postfix is left to right)
+            s.pop();
+            operatorNode->left = s.top();   // Left child
+            s.pop();
+
+            // Push the new operator node onto the stack
+            s.push(operatorNode);
+        }
+    }
+
+    // The last remaining node on the stack is the root of the expression tree
+    return s.top();
+}
+
+// Recursive pre-order traversal of the expression tree
+void preorderRecursive(Node* root) {
+    if (root == nullptr) return;
+
+    cout << root->data << " ";        // Visit the node
+    preorderRecursive(root->left);    // Visit the left subtree
+    preorderRecursive(root->right);   // Visit the right subtree
+}
+
+// Non-recursive pre-order traversal of the expression tree using a stack
+void preorderNonRecursive(Node* root) {
+    if (root == nullptr) return;
+
+    stack<Node*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+        Node* current = s.top();
+        s.pop();
+
+        cout << current->data << " ";  // Visit the node
+
+        // Push right and left children to the stack
+        if (current->right != nullptr) s.push(current->right);
+        if (current->left != nullptr) s.push(current->left);
+    }
+}
+
+int main() {
+    string postfix;
+    cout << "Enter a postfix expression: ";
+    cin >> postfix;
+
+    // Construct the expression tree from the postfix expression
+    Node* root = constructTree(postfix);
+
+    // Display the expression using recursive pre-order traversal
+    cout << "Pre-order traversal (Recursive): ";
+    preorderRecursive(root);
+    cout << endl;
+
+    // Display the expression using non-recursive pre-order traversal
+    cout << "Pre-order traversal (Non-recursive): ";
+    preorderNonRecursive(root);
+    cout << endl;
+
+    return 0;
+}

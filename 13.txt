@@ -1,0 +1,104 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype>
+using namespace std;
+
+// Structure for the expression tree nodes
+struct Node {
+    char data;
+    Node* left;
+    Node* right;
+
+    Node(char val) {
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+// Function to check if the character is an operand (i.e., a digit)
+bool isOperand(char ch) {
+    return isdigit(ch);
+}
+
+// Function to construct the expression tree from the prefix expression
+Node* constructTree(const string& prefix) {
+    stack<Node*> s;
+
+    // Traverse the prefix expression from right to left
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        char ch = prefix[i];
+
+        if (isOperand(ch)) {
+            s.push(new Node(ch));  // Operand: Create a new node and push it onto the stack
+        } else {
+            Node* operatorNode = new Node(ch);  // Operator: Create a new node for the operator
+
+            // Pop two operands from the stack to be the left and right children
+            operatorNode->left = s.top();
+            s.pop();
+            operatorNode->right = s.top();
+            s.pop();
+
+            // Push the new operator node onto the stack
+            s.push(operatorNode);
+        }
+    }
+
+    // The last remaining node on the stack is the root of the expression tree
+    return s.top();
+}
+
+// Recursive post-order traversal of the expression tree
+void postorderRecursive(Node* root) {
+    if (root == nullptr) return;
+
+    postorderRecursive(root->left);  // Visit the left subtree
+    postorderRecursive(root->right); // Visit the right subtree
+    cout << root->data << " ";       // Visit the node
+}
+
+// Non-recursive post-order traversal of the expression tree using a stack
+void postorderNonRecursive(Node* root) {
+    if (root == nullptr) return;
+
+    stack<Node*> s1, s2;
+    s1.push(root);
+
+    while (!s1.empty()) {
+        Node* current = s1.top();
+        s1.pop();
+        s2.push(current);
+
+        // Push left and right children to s1
+        if (current->left != nullptr) s1.push(current->left);
+        if (current->right != nullptr) s1.push(current->right);
+    }
+
+    // Print nodes from s2
+    while (!s2.empty()) {
+        cout << s2.top()->data << " ";
+        s2.pop();
+    }
+}
+
+int main() {
+    string prefix;
+    cout << "Enter a prefix expression: ";
+    cin >> prefix;
+
+    // Construct the expression tree from the prefix expression
+    Node* root = constructTree(prefix);
+
+    // Display the expression using recursive post-order traversal
+    cout << "Post-order traversal (Recursive): ";
+    postorderRecursive(root);
+    cout << endl;
+
+    // Display the expression using non-recursive post-order traversal
+    cout << "Post-order traversal (Non-recursive): ";
+    postorderNonRecursive(root);
+    cout << endl;
+
+    return 0;
+}

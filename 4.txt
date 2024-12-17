@@ -1,0 +1,72 @@
+
+4  SAME SGPA
+
+#include<iostream>
+#include<string>
+using namespace std;
+
+struct student
+{
+    int rollno;
+    string name;
+    float sgpa;
+};
+
+void inputdata(student students[], int n)
+{
+    for(int i=0;i<n;i++)
+    {
+    cout<<"enter student data"<<endl;
+    cout<<"rollno:";
+    cin>>students[i].rollno;
+    cout<<"name:";
+    cin>>students[i].name;
+    cout<<"sgpa:";
+    cin>>students[i].sgpa;
+    }
+};
+
+void searchsgpa(student students[],int n, float sgpa)
+{
+    bool found =false;
+      cout << "Students with SGPA " << sgpa << ":\n";
+    cout << "rollno\tname\t\tsgpa\n";
+    for(int i=1;i<n;i++)
+    {
+        if(students[i].sgpa= sgpa)
+        {
+            cout << students[i].rollno << "\t" << students[i].name << "\t" << students[i].sgpa << "\n";
+            found = true;
+        }
+    }
+     if (!found) {
+        cout << "No students found with SGPA " << sgpa << ".\n";
+     }
+};
+
+
+void display(student students[],int n)
+{
+    cout<<"student roll call list"<<endl;
+    cout<<"rollno\tname\tsgpa"<<endl;
+    for(int i=0;i<n;i++)
+    {
+        cout<<students[i].rollno<<"\t"<<students[i].name<<"\t"<<students[i].sgpa<<endl;
+    }
+};
+
+
+int main()
+{
+    const int num=4;
+    student students[num];
+    
+    inputdata(students,num);
+    display(students,num);
+     float sgpaToSearch;
+    cout << "Enter SGPA to search for: ";
+    cin >> sgpaToSearch;
+    searchsgpa(students, num, sgpaToSearch);
+    
+    return 0;
+}

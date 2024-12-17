@@ -1,0 +1,118 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <stack>
+#include <cmath>
+using namespace std;
+
+// Node structure for singly linked list (stack implementation)
+struct Node {
+    float data;
+    Node* next;
+};
+
+// Stack class using singly linked list
+class Stack {
+public:
+    Node* top;
+    
+    Stack() {
+        top = nullptr;
+    }
+
+    // Push an element onto the stack
+    void push(float value) {
+        Node* newNode = new Node();
+        newNode->data = value;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    // Pop an element from the stack
+    float pop() {
+        if (top == nullptr) {
+            cout << "Stack is empty!" << endl;
+            return -1;  // Return -1 if the stack is empty
+        }
+        float poppedValue = top->data;
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+        return poppedValue;
+    }
+
+    // Peek the top element of the stack
+    float peek() {
+        if (top == nullptr) return -1;
+        return top->data;
+    }
+
+    // Check if the stack is empty
+    bool isEmpty() {
+        return top == nullptr;
+    }
+};
+
+// Function to evaluate prefix expression
+float evaluatePrefix(const string& prefix) {
+    Stack s;
+    
+    // Traverse the prefix expression from right to left
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        char ch = prefix[i];
+        
+        // If the character is a space, skip it
+        if (ch == ' ') continue;
+
+        // If the character is a digit, push it to the stack
+        if (isdigit(ch)) {
+            s.push(ch - '0');  // Convert char to int and push onto the stack
+        }
+        // If the character is an operator
+        else {
+            // Pop two operands from the stack
+            float operand1 = s.pop();
+            float operand2 = s.pop();
+            
+            // Apply the operator and push the result onto the stack
+            switch(ch) {
+                case '+':
+                    s.push(operand1 + operand2);
+                    break;
+                case '-':
+                    s.push(operand1 - operand2);
+                    break;
+                case '*':
+                    s.push(operand1 * operand2);
+                    break;
+                case '/':
+                    if (operand2 != 0) {
+                        s.push(operand1 / operand2);
+                    } else {
+                        cout << "Division by zero!" << endl;
+                        return -1;
+                    }
+                    break;
+                default:
+                    cout << "Unknown operator " << ch << endl;
+                    return -1;
+            }
+        }
+    }
+    
+    // The final result is the last element on the stack
+    return s.pop();
+}
+
+int main() {
+    string prefix;
+    cout << "Enter prefix expression (without spaces between operands): ";
+    getline(cin, prefix);
+    
+    // Evaluate the prefix expression
+    float result = evaluatePrefix(prefix);
+    
+    cout << "Result of the prefix expression: " << result << endl;
+
+    return 0;
+}

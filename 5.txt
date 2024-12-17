@@ -1,0 +1,108 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+struct Student {
+    int rollNo;
+    string name;
+    float SGPA;
+};
+
+// Function to swap two students (for Bubble Sort)
+void swap(Student &a, Student &b) {
+    Student temp = a;
+    a = b;
+    b = temp;
+}
+
+// Bubble Sort to sort the students by name
+void bubbleSort(Student arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j].name > arr[j + 1].name) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+// Function to perform binary search on the array of students
+void binarySearch(Student arr[], int n, const string &searchName) {
+    int low = 0, high = n - 1;
+    bool found = false;
+    
+    // Binary search loop
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        
+        if (arr[mid].name == searchName) {
+            // If we find the name, print the student details
+            found = true;
+            cout << "Student Found: Roll No: " << arr[mid].rollNo << ", Name: " << arr[mid].name << ", SGPA: " << arr[mid].SGPA << endl;
+            
+            // Check for multiple occurrences (search to the left and right)
+            int left = mid - 1;
+            while (left >= 0 && arr[left].name == searchName) {
+                cout << "Student Found: Roll No: " << arr[left].rollNo << ", Name: " << arr[left].name << ", SGPA: " << arr[left].SGPA << endl;
+                left--;
+            }
+
+            int right = mid + 1;
+            while (right < n && arr[right].name == searchName) {
+                cout << "Student Found: Roll No: " << arr[right].rollNo << ", Name: " << arr[right].name << ", SGPA: " << arr[right].SGPA << endl;
+                right++;
+            }
+            break;
+        }
+        else if (arr[mid].name < searchName) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    if (!found) {
+        cout << "Student with name '" << searchName << "' not found!" << endl;
+    }
+}
+
+// Function to take input for student records
+void inputStudentData(Student arr[], int &n) {
+    cout << "Enter the number of students: ";
+    cin >> n;
+    
+    // Taking input for each student
+    for (int i = 0; i < n; i++) {
+        cout << "\nEnter details for Student " << i + 1 << endl;
+        cout << "Roll No: ";
+        cin >> arr[i].rollNo;
+        cin.ignore();  // To clear any newline character left in buffer
+        cout << "Name: ";
+        getline(cin, arr[i].name);  // Taking string input for name
+        cout << "SGPA: ";
+        cin >> arr[i].SGPA;
+    }
+}
+
+int main() {
+    Student students[20]; // Array to hold student data (up to 20 students)
+    int n;
+
+    // Input student data from user
+    inputStudentData(students, n);
+
+    // Sort students by name using Bubble Sort
+    bubbleSort(students, n);
+
+    // Ask the user for the name to search for
+    string searchName;
+    cout << "\nEnter the name of the student to search: ";
+    cin.ignore();  // Clear buffer before getline
+    getline(cin, searchName);
+
+    // Perform binary search to find the student(s)
+    binarySearch(students, n, searchName);
+
+    return 0;
+}

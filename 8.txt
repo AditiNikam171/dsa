@@ -1,0 +1,113 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <stack>
+#include <cmath>
+using namespace std;
+
+// Node structure for singly linked list (stack implementation)
+struct Node {
+    float data;
+    Node* next;
+};
+
+// Stack class using singly linked list
+class Stack {
+public:
+    Node* top;
+    
+    Stack() {
+        top = nullptr;
+    }
+
+    // Push an element onto the stack
+    void push(float value) {
+        Node* newNode = new Node();
+        newNode->data = value;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    // Pop an element from the stack
+    float pop() {
+        if (top == nullptr) {
+            cout << "Stack is empty!" << endl;
+            return -1;  // Return -1 if the stack is empty
+        }
+        float poppedValue = top->data;
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+        return poppedValue;
+    }
+
+    // Peek the top element of the stack
+    float peek() {
+        if (top == nullptr) return -1;
+        return top->data;
+    }
+
+    // Check if the stack is empty
+    bool isEmpty() {
+        return top == nullptr;
+    }
+};
+
+// Function to evaluate postfix expression
+float evaluatePostfix(const string& postfix) {
+    Stack s;
+    
+    // Traverse the postfix expression
+    for (int i = 0; i < postfix.length(); i++) {
+        char ch = postfix[i];
+        
+        // If the character is a space, skip it
+        if (ch == ' ') continue;
+
+        // If the character is a digit, push it to the stack
+        if (isdigit(ch)) {
+            s.push(ch - '0');  // Convert char to int and push onto the stack
+        }
+        // If the character is an operator
+        else {
+            // Pop two operands from the stack
+            float operand2 = s.pop();
+            float operand1 = s.pop();
+            
+            // Apply the operator and push the result onto the stack
+            switch(ch) {
+                case '+':
+                    s.push(operand1 + operand2);
+                    break;
+                case '-':
+                    s.push(operand1 - operand2);
+                    break;
+                case '*':
+                    s.push(operand1 * operand2);
+                    break;
+                case '/':
+                    s.push(operand1 / operand2);
+                    break;
+                default:
+                    cout << "Unknown operator " << ch << endl;
+                    return -1;
+            }
+        }
+    }
+    
+    // The final result is the last element on the stack
+    return s.pop();
+}
+
+int main() {
+    string postfix;
+    cout << "Enter postfix expression (without spaces between operands): ";
+    getline(cin, postfix);
+    
+    // Evaluate the postfix expression
+    float result = evaluatePostfix(postfix);
+    
+    cout << "Result of the postfix expression: " << result << endl;
+
+    return 0;
+}

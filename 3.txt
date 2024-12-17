@@ -1,0 +1,86 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+struct Student {
+    int rollNo;
+    string name;
+    float SGPA;
+};
+
+// Function to swap two students
+void swap(Student &a, Student &b) {
+    Student temp = a;
+    a = b;
+    b = temp;
+}
+
+// Partition function for Quick Sort
+int partition(Student arr[], int low, int high) {
+    float pivot = arr[high].SGPA;  // Choosing last element as pivot
+    int i = low - 1;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j].SGPA > pivot) {  // For descending order
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return (i + 1);
+}
+
+// Quick Sort function
+void quickSort(Student arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Function to display student details
+void displayTop10Students(Student arr[], int size) {
+    cout << "\nTop 10 Toppers:" << endl;
+    cout << "Roll No\tName\t\tSGPA" << endl;
+    for (int i = 0; i < 10 && i < size; i++) {
+        cout << arr[i].rollNo << "\t" << arr[i].name << "\t" << arr[i].SGPA << endl;
+    }
+}
+
+// Function to take input from user
+void inputStudentData(Student arr[], int &n) {
+    cout << "Enter the number of students: ";
+    cin >> n;
+    
+    // Taking input for each student
+    for (int i = 0; i < n; i++) {
+        cout << "\nEnter details for Student " << i + 1 << endl;
+        cout << "Roll No: ";
+        cin >> arr[i].rollNo;
+        cin.ignore();  // to ignore any leftover newline character from cin
+        cout << "Name: ";
+        getline(cin, arr[i].name);  // Taking string input (name)
+        cout << "SGPA: ";
+        cin >> arr[i].SGPA;
+    }
+}
+
+int main() {
+    Student students[20]; // Array to hold student data (up to 20 students)
+    int n;
+
+    // Input student data from user
+    inputStudentData(students, n);
+
+    // Sorting students based on SGPA in descending order using Quick Sort
+    quickSort(students, 0, n - 1);
+
+    // Displaying the top 10 students
+    displayTop10Students(students, n);
+
+    return 0;
+}
+
+
